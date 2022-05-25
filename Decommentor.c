@@ -113,6 +113,22 @@ enum State handle_to_end_comment_state(char character){
     return state;
 }
 
+int line_count_tracker(char character,int previous_line_count){
+    int current_line_count=previous_line_count;
+    if(character == '\n'){
+        return ++previous_line_count;
+    }else{
+        return previous_line_count;
+    }
+}
+void generate_output(enum State state, char *uncommented,int comment_start_line){
+    if(state==UNTERMINTATED_COMMENT){
+        printf("%s",uncommented);
+        fprintf( stderr, "Error: line %d: unterminated comment", comment_start_line);
+    }else{
+        printf("%s",uncommented);
+    }
+}
 
 
 int main(int nArgs, char *Args[]){
