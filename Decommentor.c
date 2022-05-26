@@ -132,6 +132,44 @@ void generate_output(enum State state, char *uncommented,int comment_start_line)
 
 
 int main(int nArgs, char *Args[]){
-    
+     enum State state=NORMAL_CODE;
+    int comment_start_line;
+    int current_line_number=1;
+    char *uncommented=malloc(sizeof(char));
+    char character;
+    while((character = getchar())){
+        switch (state)
+        {
+            case NORMAL_CODE:
+                state =handle_normalcode_state(character,uncommented);
+                break;
+            case TO_COMMENT:
+                state =handle_to_comment_state(character,uncommented,current_line_number,&comment_start_line);
+                break;
+            case SINGLE_LINE_COMMENT:
+                state =handle_single_line_comment_state(character,uncommented);
+                break;
+            case MULTIPLE_LINE_COMMENT:
+                state =handle_multi_line_comment_state(character,uncommented);
+                break;
+            case TO_END_COMMENT:
+                state =handle_to_end_comment_state(character);
+                break;
+            case SINGLEQUOTE:
+                state =handle_singlequote_state(character,uncommented);
+                break;
+            case DOUBLEQUOTE:
+                state =handle_doublequote_state(character,uncommented);
+                break;
+            default:
+                break;
+        }
+        current_line_number= line_count_tracker(character,current_line_number);
+        if(character==EOF){
+            break;
+        }
+    }
+    generate_output(state,uncommented,comment_start_line);
+    free(uncommented);
     return 0;
 }
